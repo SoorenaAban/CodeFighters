@@ -14,4 +14,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeFighters.Data\CodeFighters.Data.csproj" />
+    <ProjectReference Include="..\CodeFighters.GameMaster\CodeFighters.GameMaster.csproj" />
+    <ProjectReference Include="..\CodeFighters.Models\CodeFighters.Models.csproj" />
+  </ItemGroup>
+
 </Project>

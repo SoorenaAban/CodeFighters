@@ -1,8 +1,8 @@
 ﻿using CodeFighters.WebApi.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CodeFighters.WebApi.Models;
-using CodeFighters.WebApi.Data;
+using CodeFighters.Models;
+using CodeFighters.Data;
 
 namespace CodeFighters.WebApi.Controllers
 {

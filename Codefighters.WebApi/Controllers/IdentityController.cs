@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CodeFighters.WebApi.Models;
-using CodeFighters.WebApi.Data;
+using CodeFighters.Data;
 using CodeFighters.WebApi.Dto;
 using CodeFighters.WebApi.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CodeFighters.Models;
 
 namespace CodeFighters.WebApi.Controllers
 {

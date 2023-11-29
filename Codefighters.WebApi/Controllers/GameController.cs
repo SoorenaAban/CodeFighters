@@ -1,6 +1,6 @@
-﻿using CodeFighters.WebApi.Data;
+﻿using CodeFighters.Data;
 using CodeFighters.WebApi.Dto;
-using CodeFighters.WebApi.Models;
+using CodeFighters.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-﻿using CodeFighters.WebApi.Models;
+﻿using CodeFighters.Models;
 
 namespace CodeFighters.WebApi.Dto
 {

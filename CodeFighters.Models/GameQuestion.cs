@@ -1,4 +1,4 @@
-﻿namespace CodeFighters.WebApi.Models
+﻿namespace CodeFighters.Models
 {
     public class GameQuestion : BaseModel
     {

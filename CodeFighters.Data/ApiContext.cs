@@ -1,8 +1,8 @@
-﻿using CodeFighters.WebApi.Models;
+﻿using CodeFighters.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.InMemory;
 
-namespace CodeFighters.WebApi.Data
+namespace CodeFighters.Data
 {
     public class ApiContext : DbContext
     {
@@ -17,8 +17,8 @@ namespace CodeFighters.WebApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(u => u.Games).WithMany(g => g.Players);
-            modelBuilder.Entity<User>().HasMany(u => u.GamesStarted).WithOne(g => g.StartedBy);
+            modelBuilder.Entity<User>().HasMany(u => u.Games).WithOne(g => g.PlayerOne);
+            modelBuilder.Entity<User>().HasMany(u => u.Games).WithOne(g => g.PlayerTwo);
             modelBuilder.Entity<User>().HasMany(u => u.TurnsIn).WithOne(g => g.Turn);
 
 

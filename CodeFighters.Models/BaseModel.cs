@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CodeFighters.WebApi.Models
+namespace CodeFighters.Models
 {
     public abstract class BaseModel
     {
