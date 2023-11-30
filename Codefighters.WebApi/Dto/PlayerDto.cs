@@ -4,7 +4,7 @@ namespace CodeFighters.WebApi.Dto
 {
     public class PlayerDto
     {
-        public PlayerDto(User player)
+        public PlayerDto(UserModel player)
         {
             Username = player.Username;
             DisplayName = player.DisplayName;

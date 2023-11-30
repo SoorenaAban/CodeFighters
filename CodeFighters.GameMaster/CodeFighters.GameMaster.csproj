@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="IronPython" Version="3.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeFighters.Data\CodeFighters.Data.csproj" />
+    <ProjectReference Include="..\CodeFighters.Models\CodeFighters.Models.csproj" />
+  </ItemGroup>
+
 </Project>

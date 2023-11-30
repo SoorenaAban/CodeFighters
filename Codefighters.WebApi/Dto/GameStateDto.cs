@@ -4,7 +4,7 @@ namespace CodeFighters.WebApi.Dto
 {
     public class GameStateDto
     {
-        public GameStateDto(Game game)
+        public GameStateDto(GameModel game)
         {
             Id = game.Id;
             PlayerOneUsername = game.PlayerOne.Username;
@@ -18,7 +18,7 @@ namespace CodeFighters.WebApi.Dto
             StartTime = game.StartTime;
             EndTime = game.EndTime;
             IsActive = game.IsActive;
-            CurrentQuestion = game.CurrentQuestion;
+            //CurrentQuestion = game.CurrentQuestion;
         }
 
         public Guid Id { get; set; }
@@ -34,6 +34,6 @@ namespace CodeFighters.WebApi.Dto
         public DateTime? EndTime { get; set; }
         public bool IsActive { get; set; }
 
-        public GameQuestion CurrentQuestion { get; set; }
+        public GameQuestionModel CurrentQuestion { get; set; }
     }
 }

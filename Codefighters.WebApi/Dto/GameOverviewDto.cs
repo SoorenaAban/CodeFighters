@@ -4,7 +4,7 @@ namespace CodeFighters.WebApi.Dto
 {
     public class GameOverviewDto
     {
-        public GameOverviewDto(Game game)
+        public GameOverviewDto(GameModel game)
         {
             Id = game.Id;
             PlayerOne = game.PlayerOne.Username;

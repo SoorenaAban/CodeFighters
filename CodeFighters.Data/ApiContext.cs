@@ -10,18 +10,22 @@ namespace CodeFighters.Data
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Game> Games { get; set; }
-        public DbSet<GameQuestion> GameQuestions { get; set; }
+        public DbSet<UserModel> Users { get; set; }
+        public DbSet<GameModel> Games { get; set; }
+        public DbSet<GameQuestionModel> GameQuestions { get; set; }
         public DbSet<GameAction> GameActions { get; set; }
+        public DbSet<ContactMessageModel> ContactMessages { get; set; }
+        public DbSet<ReportModel> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(u => u.Games).WithOne(g => g.PlayerOne);
-            modelBuilder.Entity<User>().HasMany(u => u.Games).WithOne(g => g.PlayerTwo);
-            modelBuilder.Entity<User>().HasMany(u => u.TurnsIn).WithOne(g => g.Turn);
+            modelBuilder.Entity<UserModel>().HasMany(u => u.Games).WithMany(g => g.Players);
+            modelBuilder.Entity<UserModel>().HasMany(u => u.TurnsIn).WithOne(g => g.Turn);
 
 
+
+            modelBuilder.Entity<UserModel>().HasMany(u => u.Reports).WithOne(r => r.ReportedUser);
+            modelBuilder.Entity<UserModel>().HasMany(u => u.ReportsMade).WithOne(r => r.ReportingUser);
         }
 
 

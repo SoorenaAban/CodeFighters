@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Net.WebSockets;
+using System.Text;
+using CodeFighters.GameMaster;
+using System.Runtime.InteropServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeFighters.WebApi.Controllers
 {
@@ -13,10 +18,63 @@ namespace CodeFighters.WebApi.Controllers
     public class GameController : Controller
     {
         private readonly ApiContext _apiContext;
+        private readonly IGameMaster _gameMaster;
 
-        public GameController(ApiContext apiContext)
+        public GameController(ApiContext apiContext, GameMaster.IGameMaster gameMaster)
         {
             _apiContext = apiContext;
+            _gameMaster = gameMaster;
+        }
+
+        private static async Task Echo(WebSocket webSocket, GameModel gameModel)
+        {
+
+
+            var buffer = new byte[1024 * 4];
+            var receiveResult = await webSocket.ReceiveAsync(
+                new ArraySegment<byte>(buffer), CancellationToken.None);
+
+
+
+            buffer = Encoding.UTF8.GetBytes("Game Started.");
+            await webSocket.SendAsync(
+                new ArraySegment<byte>(buffer, 0, buffer.Length),
+                receiveResult.MessageType,
+                receiveResult.EndOfMessage,
+                CancellationToken.None);
+
+            while (!receiveResult.CloseStatus.HasValue)
+            {
+
+
+                receiveResult = await webSocket.ReceiveAsync(
+                    new ArraySegment<byte>(buffer), CancellationToken.None);
+            }
+
+            await webSocket.CloseAsync(
+                receiveResult.CloseStatus.Value,
+                receiveResult.CloseStatusDescription,
+                CancellationToken.None);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("new/{targetUsername}")]
+        public IActionResult New(string targetUsername)
+        {
+            var currentUsername = HttpContext.User.Identity.Name;
+            var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
+            var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == targetUsername);
+            if (currentUser == null || targetUser == null) 
+            {
+                return NotFound();
+            }
+
+            var game = new GameModel(currentUser, targetUser);
+            _apiContext.Games.Add(game);
+            _apiContext.SaveChanges();
+            _gameMaster.CreateGame(game, _apiContext);
+            return Ok(game.Id);
         }
 
         [Authorize]
@@ -24,7 +82,7 @@ namespace CodeFighters.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
-            var games = _apiContext.Games.Any() ? _apiContext.Games : null;
+            var games = _apiContext.Games.Include(g => g.Players);
             var gameDtos = new List<GameOverviewDto>();
             foreach (var game in games)
             {
@@ -32,6 +90,30 @@ namespace CodeFighters.WebApi.Controllers
             }
 
             return Ok(gameDtos);
+        }
+
+        [Route("/ws/{gameid:guid}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task GetGameWebSocet(Guid gameid)
+        {
+            var gameModel = _apiContext.Games.FirstOrDefault(g => g.Id == gameid);
+
+            if (gameModel == null)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+                return;
+            }
+
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                await Echo(webSocket, gameModel);
+            }
+
+            else
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            }
         }
 
         [Authorize]
@@ -51,8 +133,8 @@ namespace CodeFighters.WebApi.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("start/{target}")]
-        public IActionResult Start(string target)
+        [Route("ready/{target}")]
+        public IActionResult Ready(string target)
         {
             var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == target);
             if (targetUser == null)
@@ -63,7 +145,7 @@ namespace CodeFighters.WebApi.Controllers
             if(currentUser == null)
                 return StatusCode(StatusCodes.Status500InternalServerError);
 
-            var game = new Game(currentUser , targetUser);
+            var game = new GameModel(currentUser , targetUser);
             _apiContext.Games.Add(game);
             _apiContext.SaveChanges();
             return Ok();

@@ -58,7 +58,7 @@ namespace CodeFighters.WebApi.Controllers
         public IActionResult Register([FromBody]RegisterationDto registerDto)
         {
             var passwordHash = Encryption.PBKDF2(registerDto.Username, registerDto.Password);
-            var user = new User
+            var user = new UserModel
             {
                 Username = registerDto.Username,
                 PasswordHash = passwordHash,

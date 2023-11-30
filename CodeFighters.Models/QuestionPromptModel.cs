@@ -1,6 +1,6 @@
 ﻿namespace CodeFighters.Models
 {
-    public class QuestionPrompt
+    public class QuestionPromptModel
     {
     }
 }

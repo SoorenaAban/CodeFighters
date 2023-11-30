@@ -2,8 +2,8 @@
 {
     public class GameAction : BaseModel
     {
-        public Game Game { get; set; }
-        public User User { get; set; }
+        public GameModel Game { get; set; }
+        public UserModel User { get; set; }
 
     }
 }
