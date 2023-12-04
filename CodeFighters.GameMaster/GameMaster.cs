@@ -48,5 +48,17 @@ namespace CodeFighters.GameMaster
 
             game.End();
         }
+
+        public GameWorker? GetGameWorker(Guid gameId)
+        {
+            if (ActiveGames == null)
+            {
+                return null;
+            }
+
+            var temp =  ActiveGames.FirstOrDefault(g => g.Game.Id == gameId);
+
+            return temp;
+        }
     }
 }

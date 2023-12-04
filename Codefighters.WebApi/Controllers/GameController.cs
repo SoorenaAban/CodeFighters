@@ -70,7 +70,25 @@ namespace CodeFighters.WebApi.Controllers
                 return NotFound();
             }
 
-            var game = new GameModel(currentUser, targetUser);
+            var game = new GameModel();
+            game.Players = new List<UserModel>
+            {
+                currentUser,
+                targetUser
+            };
+            game.PlayerOneId = currentUser.Id;
+            game.PlayerOneReady = false;
+            game.PlayerTwoReady = false;
+            game.Turn = currentUser;
+            game.IsActive = true;
+            game.IsRunning = false;
+            game.HasStarted = false;
+            game.PlayerOneHealth = 100;
+            game.PlayerTwoHealth = 100;
+            game.QuestionCount = 10;
+            game.QuestionNumber = 1;
+            game.TurnNumber = 1;
+
             _apiContext.Games.Add(game);
             _apiContext.SaveChanges();
             _gameMaster.CreateGame(game, _apiContext);
@@ -92,28 +110,9 @@ namespace CodeFighters.WebApi.Controllers
             return Ok(gameDtos);
         }
 
-        [Route("/ws/{gameid:guid}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task GetGameWebSocet(Guid gameid)
+        private void PushMessages(string someMessageSource, WebSocket socket)
         {
-            var gameModel = _apiContext.Games.FirstOrDefault(g => g.Id == gameid);
-
-            if (gameModel == null)
-            {
-                HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-                return;
-            }
-
-            if (HttpContext.WebSockets.IsWebSocketRequest)
-            {
-                var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                await Echo(webSocket, gameModel);
-            }
-
-            else
-            {
-                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            }
+            throw new NotImplementedException();
         }
 
         [Authorize]
@@ -131,25 +130,25 @@ namespace CodeFighters.WebApi.Controllers
             return Ok(activeGameDtos);
         }
 
-        [Authorize]
-        [HttpPost]
-        [Route("ready/{target}")]
-        public IActionResult Ready(string target)
-        {
-            var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == target);
-            if (targetUser == null)
-                return NotFound();
+        //[Authorize]
+        //[HttpPost]
+        //[Route("ready/{target}")]
+        //public IActionResult Ready(string target)
+        //{
+        //    var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == target);
+        //    if (targetUser == null)
+        //        return NotFound();
 
-            var currentUsername = HttpContext.User.Identity.Name;
-            var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
-            if(currentUser == null)
-                return StatusCode(StatusCodes.Status500InternalServerError);
+        //    var currentUsername = HttpContext.User.Identity.Name;
+        //    var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
+        //    if(currentUser == null)
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
 
-            var game = new GameModel(currentUser , targetUser);
-            _apiContext.Games.Add(game);
-            _apiContext.SaveChanges();
-            return Ok();
-        }
+        //    var game = new GameModel(currentUser , targetUser);
+        //    _apiContext.Games.Add(game);
+        //    _apiContext.SaveChanges();
+        //    return Ok();
+        //}
 
         [Authorize]
         [HttpPost]

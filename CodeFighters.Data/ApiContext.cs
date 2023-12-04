@@ -22,7 +22,7 @@ namespace CodeFighters.Data
             modelBuilder.Entity<UserModel>().HasMany(u => u.Games).WithMany(g => g.Players);
             modelBuilder.Entity<UserModel>().HasMany(u => u.TurnsIn).WithOne(g => g.Turn);
 
-
+            modelBuilder.Entity<GameModel>().HasMany(g => g.Players).WithMany(u => u.Games);
 
             modelBuilder.Entity<UserModel>().HasMany(u => u.Reports).WithOne(r => r.ReportedUser);
             modelBuilder.Entity<UserModel>().HasMany(u => u.ReportsMade).WithOne(r => r.ReportingUser);

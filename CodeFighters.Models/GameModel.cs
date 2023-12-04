@@ -1,45 +1,35 @@
-﻿namespace CodeFighters.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CodeFighters.Models
 {
     public class GameModel : BaseModel
     {
         public const int MAX_SEC_WAITING_FOR_PLAYERS = 30;
 
-        public GameModel()
-        {
-            PlayerOneHealth = 100;
-            PlayerTwoHealth = 100;
-            TurnNumber = 1;
-            QuestionNumber = 1;
-            QuestionCount = 10;
-            StartTime = DateTime.Now;
-            IsActive = true;
-            IsRunning = false;
-        }
-        public GameModel(UserModel startedBy, UserModel targetUser)
-        {
-            Players = new List<UserModel>
-            {
-                startedBy,
-                targetUser
-            };
-            PlayerOneHealth = 100;
-            PlayerTwoHealth = 100;
-            Turn = targetUser;
-            TurnNumber = 1;
-            QuestionNumber = 1;
-            QuestionCount = 10;
-            StartTime = DateTime.Now;
-            IsActive = true;
-            IsRunning = false;
-
-        }
 
         public virtual ICollection<UserModel> Players { get; set; }
+        public Guid PlayerOneId { get; set; }
 
-        public UserModel PlayerOne => Players.First();
+        [NotMapped]
+        public UserModel PlayerOne
+        {
+            get
+            {
+                return Players.FirstOrDefault(p => p.Id == PlayerOneId);
+            }
+        }
+
+        [NotMapped]
+        public UserModel PlayerTwo
+        {
+            get
+            {
+                return Players.FirstOrDefault(p => p.Id != PlayerOneId);
+            }
+        }
+
         public int PlayerOneHealth { get; set; }
         public bool PlayerOneReady { get; set; }
-        public UserModel PlayerTwo => Players.Last();
         public int PlayerTwoHealth { get; set; }
         public bool PlayerTwoReady { get; set; }
         public int TurnNumber { get; set; }

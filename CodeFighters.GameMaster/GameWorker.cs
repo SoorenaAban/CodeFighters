@@ -139,9 +139,9 @@ namespace CodeFighters.GameMaster
             }
 
             if(isPlayerOne)
-                PlayerOneReturnMessage = tempReturnMessage;
+                PlayerOneReturnMessage += tempReturnMessage;
             else
-                PlayerTwoReturnMessage = tempReturnMessage;
+                PlayerTwoReturnMessage += tempReturnMessage;
         }
 
         public void Run()
