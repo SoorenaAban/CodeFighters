@@ -57,6 +57,12 @@ namespace CodeFighters.WebApi.Controllers
         [Route("register")]
         public IActionResult Register([FromBody]RegisterationDto registerDto)
         {
+            if (_context.Users.Any(u => u.Username == registerDto.Username))
+                return BadRequest("Username already exists.");
+
+            if (_context.Users.Any(u => u.Email == registerDto.Email))
+                return BadRequest("Email already exists.");
+
             var passwordHash = Encryption.PBKDF2(registerDto.Username, registerDto.Password);
             var user = new UserModel
             {
