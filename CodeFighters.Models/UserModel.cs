@@ -10,8 +10,10 @@
         public string ProfilePictureUrl { get; set; }
 
         public virtual ICollection<GameModel> Games { get; set; }
-        public virtual ICollection<GameModel> TurnsIn { get; set; }
         public virtual ICollection<ReportModel> Reports { get; set; }
         public virtual ICollection<ReportModel> ReportsMade { get; set; }
+        public virtual ICollection<UserMessageModel> MessagesSent { get; set; }
+        public virtual ICollection<UserMessageModel> MessagesReceived { get; set; }
+
     }
 }

@@ -11,6 +11,7 @@ namespace CodeFighters.GameMaster
     public interface IGameMaster
     {
         GameWorker CreateGame(GameModel gameModel, ApiContext apiContext);
+        void StartGame(Guid gameId);
 
         GameWorker? GetGameWorker(Guid gameId);
     }

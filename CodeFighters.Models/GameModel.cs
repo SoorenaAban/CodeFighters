@@ -4,7 +4,7 @@ namespace CodeFighters.Models
 {
     public class GameModel : BaseModel
     {
-        public const int MAX_SEC_WAITING_FOR_PLAYERS = 30;
+        public const int MAX_SEC_WAITING_FOR_PLAYERS = 60;
 
 
         public virtual ICollection<UserModel> Players { get; set; }
@@ -30,18 +30,26 @@ namespace CodeFighters.Models
 
         public int PlayerOneHealth { get; set; }
         public bool PlayerOneReady { get; set; }
+        [NotMapped]
+        public bool PlayerOneAnswered { get; set; }
         public int PlayerTwoHealth { get; set; }
         public bool PlayerTwoReady { get; set; }
+        [NotMapped]
+        public bool PlayerTwoAnswered { get; set; }
         public int TurnNumber { get; set; }
-        public int QuestionNumber { get; set; }
         public int QuestionCount { get; set; }
-        public UserModel Turn { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public bool HasStarted { get; set; }
         public bool IsActive { get; set; }
         public bool IsRunning { get; set; }
-        //public GameQuestionModel CurrentQuestion { get; set; }
+        /// <summary>
+        /// 1- not over
+        /// 2- player one won
+        /// 3- player two won
+        /// 4- tie
+        /// </summary>
+        public int Result { get; set; }
 
         public virtual ICollection<GameQuestionModel> Questions { get; set; }
 

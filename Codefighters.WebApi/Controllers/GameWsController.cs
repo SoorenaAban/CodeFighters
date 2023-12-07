@@ -41,6 +41,12 @@ namespace CodeFighters.WebApi.Controllers
 
             while (socket.State == WebSocketState.Open)
             {
+                if(gameWorker.Game.IsActive == false)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                    return;
+                }
+
                 receiveResult = await socket.ReceiveAsync(
                     new ArraySegment<byte>(buffer), CancellationToken.None);
 
@@ -71,6 +77,7 @@ namespace CodeFighters.WebApi.Controllers
 
             while (socket.State == WebSocketState.Open)
             {
+
                 string message = "";
                 if (isPlayerOne)
                 {
@@ -86,6 +93,14 @@ namespace CodeFighters.WebApi.Controllers
                     var buffer = Encoding.UTF8.GetBytes(message);
                     await socket.SendAsync(new ArraySegment<byte>(buffer, 0, buffer.Length), WebSocketMessageType.Text, true, CancellationToken.None);
                 }
+
+
+                if (gameWorker.Game.IsActive == false)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                    return;
+                }
+
                 else
                 {
                        await Task.Delay(1000);
@@ -97,13 +112,19 @@ namespace CodeFighters.WebApi.Controllers
         [Route("/ws/game/{gameid:guid}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize]
-        public async Task GetGameWebSocet(Guid gameid)
+        public async Task GetGameWebSocket(Guid gameid)
         {
             var gameModel = _apiContext.Games.Where(g => g.Id == gameid).Include("Players").FirstOrDefault(g => g.Id == gameid);
 
             if (gameModel == null)
             {
                 HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+                return;
+            }
+
+            if(gameModel.IsActive == false)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                 return;
             }
 

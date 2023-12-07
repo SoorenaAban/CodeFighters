@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApiContext>(options =>
-    options.UseInMemoryDatabase(databaseName: "ApiDb"));
+    options.UseInMemoryDatabase(databaseName: "ApiDb"), ServiceLifetime.Singleton);
 
 
 builder.Services.AddSingleton<IGameMaster, GameMaster>();

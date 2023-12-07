@@ -26,36 +26,6 @@ namespace CodeFighters.WebApi.Controllers
             _gameMaster = gameMaster;
         }
 
-        private static async Task Echo(WebSocket webSocket, GameModel gameModel)
-        {
-
-
-            var buffer = new byte[1024 * 4];
-            var receiveResult = await webSocket.ReceiveAsync(
-                new ArraySegment<byte>(buffer), CancellationToken.None);
-
-
-
-            buffer = Encoding.UTF8.GetBytes("Game Started.");
-            await webSocket.SendAsync(
-                new ArraySegment<byte>(buffer, 0, buffer.Length),
-                receiveResult.MessageType,
-                receiveResult.EndOfMessage,
-                CancellationToken.None);
-
-            while (!receiveResult.CloseStatus.HasValue)
-            {
-
-
-                receiveResult = await webSocket.ReceiveAsync(
-                    new ArraySegment<byte>(buffer), CancellationToken.None);
-            }
-
-            await webSocket.CloseAsync(
-                receiveResult.CloseStatus.Value,
-                receiveResult.CloseStatusDescription,
-                CancellationToken.None);
-        }
 
         [Authorize]
         [HttpPost]
@@ -79,19 +49,23 @@ namespace CodeFighters.WebApi.Controllers
             game.PlayerOneId = currentUser.Id;
             game.PlayerOneReady = false;
             game.PlayerTwoReady = false;
-            game.Turn = currentUser;
+            game.PlayerOneAnswered = false;
+            game.PlayerTwoAnswered = false;
+            //game.Turn = currentUser;
             game.IsActive = true;
             game.IsRunning = false;
             game.HasStarted = false;
-            game.PlayerOneHealth = 100;
-            game.PlayerTwoHealth = 100;
+            game.PlayerOneHealth = 10;
+            game.PlayerTwoHealth = 10;
             game.QuestionCount = 10;
-            game.QuestionNumber = 1;
             game.TurnNumber = 1;
+            game.CreatedAt = DateTime.Now;
+            game.Result = 1;
 
             _apiContext.Games.Add(game);
             _apiContext.SaveChanges();
             _gameMaster.CreateGame(game, _apiContext);
+            _gameMaster.StartGame(game.Id);
             return Ok(game.Id);
         }
 
@@ -150,27 +124,24 @@ namespace CodeFighters.WebApi.Controllers
         //    return Ok();
         //}
 
-        [Authorize]
-        [HttpPost]
-        [Route("{gameId:guid}/action/{action}")]
-        public IActionResult Action(Guid gameId, string action)
-        {
-            var game = _apiContext.Games.FirstOrDefault(g => g.Id == gameId);
-            if (game == null)
-                return NotFound();
+        //[Authorize]
+        //[HttpPost]
+        //[Route("{gameId:guid}/action/{action}")]
+        //public IActionResult Action(Guid gameId, string action)
+        //{
+        //    var game = _apiContext.Games.FirstOrDefault(g => g.Id == gameId);
+        //    if (game == null)
+        //        return NotFound();
 
-            var currentUsername = HttpContext.User.Identity.Name;
-            var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
-            if(currentUser == null)
-                return StatusCode(StatusCodes.Status500InternalServerError);
-
-            if(game.Turn.Id != currentUser.Id)
-                return StatusCode(StatusCodes.Status403Forbidden);
+        //    var currentUsername = HttpContext.User.Identity.Name;
+        //    var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
+        //    if(currentUser == null)
+        //        return StatusCode(StatusCodes.Status500InternalServerError);
 
             
 
-            _apiContext.SaveChanges();
-            return Ok();
-        }   
+        //    _apiContext.SaveChanges();
+        //    return Ok();
+        //}   
     }
 }

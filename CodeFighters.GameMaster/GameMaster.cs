@@ -37,18 +37,6 @@ namespace CodeFighters.GameMaster
             thread.Start();
         }
 
-        public void EndGame(Guid gameId)
-        {
-            var game = ActiveGames.FirstOrDefault(g => g.Game.Id == gameId);
-
-            if (game == null)
-            {
-                throw new ArgumentException("GameWorker not found");
-            }
-
-            game.End();
-        }
-
         public GameWorker? GetGameWorker(Guid gameId)
         {
             if (ActiveGames == null)
