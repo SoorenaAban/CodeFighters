@@ -69,7 +69,13 @@ namespace CodeFighters.WebApi.Controllers
                 Username = registerDto.Username,
                 PasswordHash = passwordHash,
                 DisplayName = registerDto.DisplayName,
-                ProfilePictureUrl = "",
+                Avatar = new ProfileAvatar
+                {
+                    Head = "1",
+                    Body = "1",
+                    Accessory = "1"
+                },
+                BattleScore = 1000,
                 Email = registerDto.Email
             };
             _context.Users.Add(user);

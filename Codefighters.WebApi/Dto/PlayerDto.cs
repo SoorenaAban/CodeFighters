@@ -8,11 +8,11 @@ namespace CodeFighters.WebApi.Dto
         {
             Username = player.Username;
             DisplayName = player.DisplayName;
-            ProfilePictureUrl = player.ProfilePictureUrl;
+            Avatar = new PlayerAvatarDto(player.Avatar);
         }
 
         public string Username { get; set; }
         public string DisplayName { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public PlayerAvatarDto Avatar { get; set; }
     }
 }

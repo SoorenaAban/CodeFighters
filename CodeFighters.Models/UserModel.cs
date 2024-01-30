@@ -7,7 +7,9 @@
         public string PasswordHash { get; set; }
         public string Email { get; set; }
         public string DisplayName { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public ProfileAvatar Avatar { get; set; }
+
+        public int BattleScore { get; set; }
 
         public virtual ICollection<GameModel> Games { get; set; }
         public virtual ICollection<ReportModel> Reports { get; set; }
