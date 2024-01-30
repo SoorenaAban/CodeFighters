@@ -14,7 +14,6 @@ namespace CodeFighters.Data
         public DbSet<GameModel> Games { get; set; }
         public DbSet<GameQuestionModel> GameQuestions { get; set; }
         public DbSet<GameAction> GameActions { get; set; }
-        public DbSet<ContactMessageModel> ContactMessages { get; set; }
         public DbSet<ReportModel> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
