@@ -23,7 +23,7 @@ builder.Services.AddDbContext<ApiContext>(options =>
 
 builder.Services.AddSingleton<IGameMaster, GameMaster>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(o => o.InputFormatters.Insert(o.InputFormatters.Count, new TextPlainInputFormatter()));
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeFighters.Models;
 using CodeFighters.Data;
-using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
 
 namespace CodeFighters.GameMaster
 {
@@ -46,20 +44,19 @@ namespace CodeFighters.GameMaster
 
         public GameModel Game { get; set; }
         private ApiContext _apiContext;
-        private ScriptEngine engine;
-        private ScriptScope scope;
         private DateTime TurnStartedAt { get; set; }
+        private GameCodeHost _gameCodeHost;
 
-        public GameWorker(GameModel gameModel, ApiContext apiContext)
+        public GameWorker(GameModel gameModel, ApiContext apiContext, GameCodeHost gameCodeHost)
         {
             Game = gameModel;
             _apiContext = apiContext;
+            _gameCodeHost = gameCodeHost;
 
-            engine = Python.CreateEngine();
-            scope = engine.CreateScope();
 
             _playerOneReturnMessage = "";
             _playerTwoReturnMessage = "";
+            _gameCodeHost = gameCodeHost;
         }
 
         private void UpdateDatabase()
@@ -68,63 +65,75 @@ namespace CodeFighters.GameMaster
             _apiContext.SaveChanges();
         }
 
+        private void SendMessage(string target, bool isPlayerOne, bool isBoth)
+        {
+            if (isBoth)
+            {
+                _playerOneReturnMessage += target + "\n";
+                _playerTwoReturnMessage += target + "\n";
+            }
+            else if (isPlayerOne)
+            {
+                _playerOneReturnMessage += target + "\n";
+            }
+            else
+            {
+                _playerTwoReturnMessage += target + "\n";
+            }
+        }
+
         public void SubmitPlayerAction(string input, bool isPlayerOne)
         {
 
-            var rightAnswer = "c";
-            var wrongAnswer = "w";
-
-            if (isPlayerOne && Game.PlayerOneAnswered && (input.ToLower().Contains(rightAnswer) || input.ToLower().Contains(wrongAnswer)))
+            if (isPlayerOne && Game.PlayerOneAnswered)
             {
-                _playerOneReturnMessage += "Player One already answered\n";
+                SendMessage("Player One already answered", isPlayerOne, false);
                 return;
             }
 
-            if (!isPlayerOne && Game.PlayerTwoAnswered && (input.ToLower().Contains(rightAnswer) || input.ToLower().Contains(wrongAnswer)))
+            if (!isPlayerOne && Game.PlayerTwoAnswered)
             {
-                _playerTwoReturnMessage += "Player Two already answered\n";
+                SendMessage("Player Two already answered", isPlayerOne, false);
                 return;
             }
+
+            var asnwerIsCorrect = _gameCodeHost.SubmitAnswer(input, isPlayerOne ? "one" : "two");
 
             //C is the placeholder answer for a correct answer
-            if (input.ToLower().Contains(rightAnswer))
+            if (asnwerIsCorrect)
             {
                 if (isPlayerOne)
                 {
                     Game.PlayerOneAnswered = true;
                     Game.PlayerOneHealth -= 1;
 
-                    _playerOneReturnMessage += "Correct Answer\n";
-                    _playerTwoReturnMessage += "Correct Answer for player one\n";
+                    SendMessage("Correct Answer for player one", isPlayerOne, true);
                 }
                 else
                 {
                     Game.PlayerTwoAnswered = true;
                     Game.PlayerTwoHealth -= 1;
 
-                    _playerTwoReturnMessage += "Correct Answer\n";
-                    _playerOneReturnMessage += "Correct Answer for player two\n";
+                    SendMessage("Correct Answer for player two", isPlayerOne, true);
                 }
             }
 
             //W is the placeholder answer for a wrong answer
-            if (input.ToLower().Contains(wrongAnswer))
+            else
             {
                 if (isPlayerOne)
                 {
                     Game.PlayerOneAnswered = true;
                     Game.PlayerTwoHealth -= 1;
 
-                    _playerOneReturnMessage += "Wrong Answer\n";
-                    _playerTwoReturnMessage += "Wrong Answer for player one\n";
+                    SendMessage("Wrong Answer for player one", isPlayerOne, true);
                 }
                 else
                 {
                     Game.PlayerTwoAnswered = true;
                     Game.PlayerOneHealth -= 1;
 
-                    _playerTwoReturnMessage += "Wrong Answer\n";
-                    _playerOneReturnMessage += "Wrong Answer for player two\n";
+                    SendMessage("Wrong Answer for player two", isPlayerOne, true);
                 }
             }
 
@@ -133,14 +142,12 @@ namespace CodeFighters.GameMaster
                 if (isPlayerOne)
                 {
                     Game.PlayerOneReady = true;
-                    _playerOneReturnMessage += "Player One Ready\n";
-                    _playerOneReturnMessage += "Player One Ready\n";
+                    SendMessage("Player One Ready", isPlayerOne, true);
                 }
                 else
                 {
                     Game.PlayerTwoReady = true;
-                    _playerTwoReturnMessage += "Player Two Ready\n";
-                    _playerOneReturnMessage += "Player Two Ready\n";
+                    SendMessage("Player Two Ready", isPlayerOne, true);
                 }
             }
         }
@@ -152,8 +159,8 @@ namespace CodeFighters.GameMaster
             switch (value)
             {
                 case "health":
-                    temp += "Player One Health:" + Game.PlayerOneHealth.ToString() + "\n";
-                    temp += "Player Two Health:" + Game.PlayerTwoHealth.ToString() + "\n";
+                    temp += "Player One Health:" + _gameCodeHost.GetValue("health", "one") + "\n";
+                    temp += "Player Two Health:" + _gameCodeHost.GetValue("health", "two") + "\n";
                     break;
                 case "turn":
                     temp += "Turn Number:" + Game.TurnNumber.ToString() + "\n";
@@ -172,35 +179,29 @@ namespace CodeFighters.GameMaster
                     break;
             }
 
-            if(isPlayerOne)
-                _playerOneReturnMessage += temp;
-            else
-                _playerTwoReturnMessage += temp;
+            SendMessage(temp, isPlayerOne, false);
         }
 
         public bool IsGameOver() 
         {
-            if (Game.PlayerOneHealth <= 0 || Game.PlayerTwoHealth <= 0)
-                return true;
 
-            if (Game.TurnNumber >= Game.QuestionCount)
-                return true;
-
-            return false;
+            return _gameCodeHost.IsGameOver();
         }
 
         public int GetWinner()
         {
-            if (Game.PlayerOneHealth <= 0 && Game.PlayerTwoHealth <= 0)
-                return 4;
+            return _gameCodeHost.GetWinner();
 
-            if (Game.PlayerOneHealth <= 0)
-                return 3;
+            //if (Game.PlayerOneHealth <= 0 && Game.PlayerTwoHealth <= 0)
+            //    return 4;
 
-            if (Game.PlayerTwoHealth <= 0)
-                return 2;
+            //if (Game.PlayerOneHealth <= 0)
+            //    return 3;
 
-            return 1;
+            //if (Game.PlayerTwoHealth <= 0)
+            //    return 2;
+
+            //return 1;
         }
 
         public bool IsTurnOver()
@@ -216,10 +217,12 @@ namespace CodeFighters.GameMaster
 
         public void EndTurn()
         {
+
             Game.TurnNumber++;
             TurnStartedAt = DateTime.Now;
             Game.PlayerOneAnswered = false;
             Game.PlayerTwoAnswered = false;
+            _gameCodeHost.SubmitTurnEnd();
             UpdateDatabase();
         }
 
@@ -253,8 +256,7 @@ namespace CodeFighters.GameMaster
                         Game.IsRunning = false;
                         Game.EndTime = DateTime.Now;
                         UpdateDatabase();
-                        _playerOneReturnMessage += "Game Aborted\n";
-                        _playerTwoReturnMessage += "Game Aborted\n";
+                        SendMessage("Game Over", true, true);
                     }
                 }
 
@@ -269,21 +271,17 @@ namespace CodeFighters.GameMaster
                     Game.IsRunning = false;
                     Game.EndTime = DateTime.Now;
                     UpdateDatabase();
-                    _playerOneReturnMessage += "Game Over\n";
-                    _playerTwoReturnMessage += "Game Over\n";
+                    SendMessage("Game Over", true, true);
                     switch (Game.Result)
                     {
                         case 2:
-                            _playerOneReturnMessage += "Player One Won\n";
-                            _playerTwoReturnMessage += "Player One Won\n";
+                            SendMessage("Player One Won", true, true);
                             break;
                         case 3:
-                        _playerOneReturnMessage += "Player Two Won\n";
-                        _playerTwoReturnMessage += "Player Two Won\n";
+                            SendMessage("Player Two Won", true, true);
                             break;
                         case 4:
-                        _playerOneReturnMessage += "Tie\n";
-                        _playerTwoReturnMessage += "Tie\n";
+                            SendMessage("Tie", true, true);
                             break;
 
                     }

@@ -9,6 +9,8 @@ namespace CodeFighters.GameMaster
         public List<GameWorker> ActiveGames { get; private set; }
         public List<Thread> ActiveGameThreads { get; private set; }
 
+        public string GameCode { get; set; }
+
         public GameMaster()
         {
             ActiveGames = new List<GameWorker>();
@@ -17,7 +19,8 @@ namespace CodeFighters.GameMaster
 
         public GameWorker CreateGame(GameModel gameModel, ApiContext apiContext)
         {
-            var game = new GameWorker(gameModel, apiContext);
+            var gameHost = new GameCodeHost(GameCode);
+            var game = new GameWorker(gameModel, apiContext, gameHost);
             ActiveGames.Add(game);
             return game;
         }

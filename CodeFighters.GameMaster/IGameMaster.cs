@@ -14,5 +14,7 @@ namespace CodeFighters.GameMaster
         void StartGame(Guid gameId);
 
         GameWorker? GetGameWorker(Guid gameId);
+
+        string GameCode { get;  set; }
     }
 }
