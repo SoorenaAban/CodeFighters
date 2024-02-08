@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFighters.Data", "CodeFi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AD17E5B-79AD-4C86-8856-38326B365362}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\..\..\Desktop\demo.py = ..\..\..\..\Desktop\demo.py
+		demo.py = demo.py
 	EndProjectSection
 EndProject
 Global
