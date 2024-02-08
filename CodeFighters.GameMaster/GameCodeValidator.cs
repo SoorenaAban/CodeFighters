@@ -21,6 +21,8 @@ namespace CodeFighters.GameMaster
         public GameCodeValidator(string gameCode)
         {
             ErrorMessage = string.Empty;
+            _engine = Python.CreateEngine();
+            _scope = _engine.CreateScope();
             _gameCode = gameCode;   
         }
 
@@ -42,8 +44,6 @@ namespace CodeFighters.GameMaster
         {
             try
             {
-                _engine = Python.CreateEngine();
-                _scope = _engine.CreateScope();
                 _engine.Execute(_gameCode, _scope);
                 _game = _engine.Operations.CreateInstance(_scope.GetVariable("Game"), false);
                 return true;
