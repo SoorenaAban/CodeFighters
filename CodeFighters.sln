@@ -5,11 +5,16 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFighters.WebApi", "Codefighters.WebApi\CodeFighters.WebApi.csproj", "{F2E1D317-B706-40E8-B81A-86DC013E7B52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFighters.GameMaster", "CodeFighters.GameMaster\CodeFighters.GameMaster.csproj", "{43729124-735E-4E5F-8EEB-117D32769FD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFighters.GameMaster", "CodeFighters.GameMaster\CodeFighters.GameMaster.csproj", "{43729124-735E-4E5F-8EEB-117D32769FD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFighters.Models", "CodeFighters.Models\CodeFighters.Models.csproj", "{F9E83FE1-8BD6-4F3E-B37F-267C1C1FA0E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFighters.Models", "CodeFighters.Models\CodeFighters.Models.csproj", "{F9E83FE1-8BD6-4F3E-B37F-267C1C1FA0E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFighters.Data", "CodeFighters.Data\CodeFighters.Data.csproj", "{E4F5F80D-D57D-49B3-B4EE-EBBCBC0A983B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeFighters.Data", "CodeFighters.Data\CodeFighters.Data.csproj", "{E4F5F80D-D57D-49B3-B4EE-EBBCBC0A983B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AD17E5B-79AD-4C86-8856-38326B365362}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Desktop\demo.py = ..\..\..\..\Desktop\demo.py
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

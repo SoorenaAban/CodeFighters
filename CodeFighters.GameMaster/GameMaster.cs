@@ -27,14 +27,14 @@ namespace CodeFighters.GameMaster
 
         public void StartGame(Guid gameId)
         {
-            var game = ActiveGames.FirstOrDefault(g => g.Game.Id == gameId);
+            var gameWorker = ActiveGames.FirstOrDefault(g => g.Game.Id == gameId);
 
-            if (game == null)
+            if (gameWorker == null)
             {
                 throw new ArgumentException("GameWorker not found");
             }
 
-            var thread = new Thread(new ThreadStart(game.Run));
+            var thread = new Thread(new ThreadStart(gameWorker.Run));
             ActiveGameThreads.Add(thread);
 
             thread.Start();

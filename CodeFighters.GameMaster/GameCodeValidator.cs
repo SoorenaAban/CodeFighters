@@ -45,7 +45,7 @@ namespace CodeFighters.GameMaster
                 _engine = Python.CreateEngine();
                 _scope = _engine.CreateScope();
                 _engine.Execute(_gameCode, _scope);
-                _game = _engine.Operations.CreateInstance(_scope.GetVariable("Game"));
+                _game = _engine.Operations.CreateInstance(_scope.GetVariable("Game"), false);
                 return true;
             }
             catch (Exception ex)

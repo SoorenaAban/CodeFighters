@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeFighters.Models;
 using CodeFighters.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeFighters.GameMaster
 {
@@ -97,28 +98,29 @@ namespace CodeFighters.GameMaster
                 return;
             }
 
-            var asnwerIsCorrect = _gameCodeHost.SubmitAnswer(input, isPlayerOne ? "one" : "two");
-
-            //C is the placeholder answer for a correct answer
-            if (asnwerIsCorrect)
+            
+            if (input.ToLower().Contains("answer"))
             {
-                if (isPlayerOne)
+                throw new NotImplementedException();
+                var asnwerIsCorrect = _gameCodeHost.SubmitAnswer(input, isPlayerOne ? "one" : "two");
+                if (asnwerIsCorrect)
                 {
-                    Game.PlayerOneAnswered = true;
-                    Game.PlayerOneHealth -= 1;
+                    if (isPlayerOne)
+                    {
+                        Game.PlayerOneAnswered = true;
+                        Game.PlayerOneHealth -= 1;
 
-                    SendMessage("Correct Answer for player one", isPlayerOne, true);
-                }
-                else
-                {
-                    Game.PlayerTwoAnswered = true;
-                    Game.PlayerTwoHealth -= 1;
+                        SendMessage("Correct Answer for player one", isPlayerOne, true);
+                    }
+                    else
+                    {
+                        Game.PlayerTwoAnswered = true;
+                        Game.PlayerTwoHealth -= 1;
 
-                    SendMessage("Correct Answer for player two", isPlayerOne, true);
+                        SendMessage("Correct Answer for player two", isPlayerOne, true);
+                    }
                 }
             }
-
-            //W is the placeholder answer for a wrong answer
             else
             {
                 if (isPlayerOne)
@@ -191,17 +193,6 @@ namespace CodeFighters.GameMaster
         public int GetWinner()
         {
             return _gameCodeHost.GetWinner();
-
-            //if (Game.PlayerOneHealth <= 0 && Game.PlayerTwoHealth <= 0)
-            //    return 4;
-
-            //if (Game.PlayerOneHealth <= 0)
-            //    return 3;
-
-            //if (Game.PlayerTwoHealth <= 0)
-            //    return 2;
-
-            //return 1;
         }
 
         public bool IsTurnOver()
@@ -236,7 +227,7 @@ namespace CodeFighters.GameMaster
         public void Run()
         {
             Game.IsRunning = true;
-
+            _gameCodeHost.StartGame(false);
 
             while (Game.IsRunning)
             {
@@ -260,30 +251,34 @@ namespace CodeFighters.GameMaster
                     }
                 }
 
-                if (IsTurnOver())
+                else
                 {
-                    EndTurn();
-                }
 
-                if (IsGameOver())
-                {
-                    Game.Result = GetWinner();
-                    Game.IsRunning = false;
-                    Game.EndTime = DateTime.Now;
-                    UpdateDatabase();
-                    SendMessage("Game Over", true, true);
-                    switch (Game.Result)
+                    if (IsTurnOver())
                     {
-                        case 2:
-                            SendMessage("Player One Won", true, true);
-                            break;
-                        case 3:
-                            SendMessage("Player Two Won", true, true);
-                            break;
-                        case 4:
-                            SendMessage("Tie", true, true);
-                            break;
+                        EndTurn();
+                    }
 
+                    if (IsGameOver())
+                    {
+                        Game.Result = GetWinner();
+                        Game.IsRunning = false;
+                        Game.EndTime = DateTime.Now;
+                        UpdateDatabase();
+                        SendMessage("Game Over", true, true);
+                        switch (Game.Result)
+                        {
+                            case 2:
+                                SendMessage("Player One Won", true, true);
+                                break;
+                            case 3:
+                                SendMessage("Player Two Won", true, true);
+                                break;
+                            case 4:
+                                SendMessage("Tie", true, true);
+                                break;
+
+                        }
                     }
                 }
 

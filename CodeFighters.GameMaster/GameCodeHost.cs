@@ -15,9 +15,12 @@ namespace CodeFighters.GameMaster
         private ScriptScope _scope;
         private dynamic _game;
 
+        public bool Started { get; private set; }
+
         public GameCodeHost(string gameCode)
         {
             _gameCode = gameCode;
+            Started = false;
         }
 
         public bool IsGameCodeValid(string gameCode)
@@ -27,7 +30,7 @@ namespace CodeFighters.GameMaster
                 var engine = Python.CreateEngine();
                 var scope = engine.CreateScope();
                 engine.Execute(gameCode, scope);
-                var game = engine.Operations.CreateInstance(scope.GetVariable("Game"));
+                var game = engine.Operations.CreateInstance(scope.GetVariable("Game"), false);
                 return true;
             }
             catch (Exception)
@@ -36,16 +39,17 @@ namespace CodeFighters.GameMaster
             }
         }
 
-        public bool StartGame(string gameCode, bool isVsAI)
+        public bool StartGame(bool isVsAI)
         {
-            if (!IsGameCodeValid(gameCode))
+            if (!IsGameCodeValid(_gameCode))
                 return false;
 
 
             _engine = Python.CreateEngine();
             _scope = _engine.CreateScope();
-            _engine.Execute(gameCode, _scope);
+            _engine.Execute(_gameCode, _scope);
             _game = _engine.Operations.CreateInstance(_scope.GetVariable("Game"), isVsAI);
+            Started = true;
             return _game.start();
         }
 
