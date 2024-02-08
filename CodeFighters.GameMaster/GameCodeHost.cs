@@ -73,9 +73,10 @@ namespace CodeFighters.GameMaster
             return _game.winner();
         }
 
-        public string GetValue(string value, string player)
+        public string GetHealth(string value, string player)
         {
-            return _game.getHealth(player);
+            var health =  _game.getHealth(player);
+            return health.ToString();
         }
 
         public string GetGameValue(string value)

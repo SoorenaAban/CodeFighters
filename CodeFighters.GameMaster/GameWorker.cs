@@ -161,8 +161,8 @@ namespace CodeFighters.GameMaster
             switch (value)
             {
                 case "health":
-                    temp += "Player One Health:" + _gameCodeHost.GetValue("health", "one") + "\n";
-                    temp += "Player Two Health:" + _gameCodeHost.GetValue("health", "two") + "\n";
+                    temp += "Player One Health:" + _gameCodeHost.GetHealth("health", "one").ToString() + "\n";
+                    temp += "Player Two Health:" + _gameCodeHost.GetHealth("health", "two").ToString() + "\n";
                     break;
                 case "turn":
                     temp += "Turn Number:" + Game.TurnNumber.ToString() + "\n";
