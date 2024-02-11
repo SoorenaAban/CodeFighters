@@ -8,6 +8,7 @@
         public string Email { get; set; }
         public string DisplayName { get; set; }
         public ProfileAvatar Avatar { get; set; }
+        public uint Score { get; set; }
 
         public int BattleScore { get; set; }
 
