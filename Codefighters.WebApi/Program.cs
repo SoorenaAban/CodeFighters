@@ -13,12 +13,20 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.WebSockets;
+using System.Data.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//builder.Services.AddDbContext<ApiContext>(options =>
+//    options.UseInMemoryDatabase(databaseName: "ApiDb"), ServiceLifetime.Singleton);
+
 builder.Services.AddDbContext<ApiContext>(options =>
-    options.UseInMemoryDatabase(databaseName: "ApiDb"), ServiceLifetime.Singleton);
+        options.UseMySql("server=soorena.co.uk;user=codefighter-api;password=Cf666666!;database=codefighters",
+                    new MySqlServerVersion(new Version(8,0,3)))
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors());
 
 
 builder.Services.AddSingleton<IGameMaster, GameMaster>();

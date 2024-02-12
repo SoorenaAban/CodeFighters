@@ -1,4 +1,5 @@
 ﻿using CodeFighters.Models;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace CodeFighters.WebApi.Dto
 {
