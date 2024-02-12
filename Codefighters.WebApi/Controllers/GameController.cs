@@ -104,44 +104,5 @@ namespace CodeFighters.WebApi.Controllers
             return Ok(activeGameDtos);
         }
 
-        //[Authorize]
-        //[HttpPost]
-        //[Route("ready/{target}")]
-        //public IActionResult Ready(string target)
-        //{
-        //    var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == target);
-        //    if (targetUser == null)
-        //        return NotFound();
-
-        //    var currentUsername = HttpContext.User.Identity.Name;
-        //    var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
-        //    if(currentUser == null)
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-
-        //    var game = new GameModel(currentUser , targetUser);
-        //    _apiContext.Games.Add(game);
-        //    _apiContext.SaveChanges();
-        //    return Ok();
-        //}
-
-        //[Authorize]
-        //[HttpPost]
-        //[Route("{gameId:guid}/action/{action}")]
-        //public IActionResult Action(Guid gameId, string action)
-        //{
-        //    var game = _apiContext.Games.FirstOrDefault(g => g.Id == gameId);
-        //    if (game == null)
-        //        return NotFound();
-
-        //    var currentUsername = HttpContext.User.Identity.Name;
-        //    var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
-        //    if(currentUser == null)
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-
-            
-
-        //    _apiContext.SaveChanges();
-        //    return Ok();
-        //}   
     }
 }
