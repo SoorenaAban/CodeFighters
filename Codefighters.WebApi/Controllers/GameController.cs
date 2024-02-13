@@ -34,18 +34,29 @@ namespace CodeFighters.WebApi.Controllers
         {
             var currentUsername = HttpContext.User.Identity.Name;
             var currentUser = _apiContext.Users.FirstOrDefault(u => u.Username == currentUsername);
-            var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == targetUsername);
-            if (currentUser == null || targetUser == null) 
+            bool isVsAI = false;
+            if (targetUsername == "server")
+                isVsAI = true;
+            if (currentUser == null) 
             {
                 return NotFound();
             }
 
             var game = new GameModel();
+
             game.Players = new List<UserModel>
             {
-                currentUser,
-                targetUser
+                currentUser
             };
+            if (!isVsAI)
+            {
+                var targetUser = _apiContext.Users.FirstOrDefault(u => u.Username == targetUsername);
+                if (targetUser == null)
+                {
+                    return NotFound();
+                }
+                game.Players.Add(targetUser);
+            }
             game.PlayerOneId = currentUser.Id;
             game.PlayerOneReady = false;
             game.PlayerTwoReady = false;
@@ -82,11 +93,6 @@ namespace CodeFighters.WebApi.Controllers
             }
 
             return Ok(gameDtos);
-        }
-
-        private void PushMessages(string someMessageSource, WebSocket socket)
-        {
-            throw new NotImplementedException();
         }
 
         [Authorize]

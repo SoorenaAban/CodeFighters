@@ -11,6 +11,8 @@ namespace CodeFighters.GameMaster
 {
     public class GameWorker
     {
+        private bool _isVsAI;
+
         private string _playerOneReturnMessage;
         public string PlayerOneReturnMessage 
         { 
@@ -58,6 +60,7 @@ namespace CodeFighters.GameMaster
             _playerOneReturnMessage = "";
             _playerTwoReturnMessage = "";
             _gameCodeHost = gameCodeHost;
+            _isVsAI = gameModel.IsVsAI;
         }
 
         private void UpdateDatabase()
@@ -68,6 +71,12 @@ namespace CodeFighters.GameMaster
 
         private void SendMessage(string target, bool isPlayerOne, bool isBoth)
         {
+            if(_isVsAI)
+            {
+                _playerOneReturnMessage += target + "\n";
+                return;
+            }
+
             if (isBoth)
             {
                 _playerOneReturnMessage += target + "\n";
@@ -228,6 +237,8 @@ namespace CodeFighters.GameMaster
         {
             Game.IsRunning = true;
             _gameCodeHost.StartGame(false);
+            if (_isVsAI)
+                Game.PlayerTwoReady = true;
 
             while (Game.IsRunning)
             {

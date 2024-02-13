@@ -6,7 +6,7 @@ namespace CodeFighters.Models
     {
         public const int MAX_SEC_WAITING_FOR_PLAYERS = 60;
 
-
+        public bool IsVsAI { get; set; }
         public virtual ICollection<UserModel> Players { get; set; }
         public Guid PlayerOneId { get; set; }
 
