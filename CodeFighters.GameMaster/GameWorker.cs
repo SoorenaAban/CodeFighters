@@ -129,24 +129,25 @@ namespace CodeFighters.GameMaster
                         SendMessage("Correct Answer for player two", isPlayerOne, true);
                     }
                 }
-            }
-            else
-            {
-                if (isPlayerOne)
-                {
-                    Game.PlayerOneAnswered = true;
-                    Game.PlayerTwoHealth -= 1;
-
-                    SendMessage("Wrong Answer for player one", isPlayerOne, true);
-                }
                 else
                 {
-                    Game.PlayerTwoAnswered = true;
-                    Game.PlayerOneHealth -= 1;
+                    if (isPlayerOne)
+                    {
+                        Game.PlayerOneAnswered = true;
+                        Game.PlayerTwoHealth -= 1;
 
-                    SendMessage("Wrong Answer for player two", isPlayerOne, true);
+                        SendMessage("Wrong Answer for player one", isPlayerOne, true);
+                    }
+                    else
+                    {
+                        Game.PlayerTwoAnswered = true;
+                        Game.PlayerOneHealth -= 1;
+
+                        SendMessage("Wrong Answer for player two", isPlayerOne, true);
+                    }
                 }
             }
+            
 
             if (input.ToLower().Contains("ready"))
             {
@@ -237,8 +238,6 @@ namespace CodeFighters.GameMaster
         {
             Game.IsRunning = true;
             _gameCodeHost.StartGame(false);
-            if (_isVsAI)
-                Game.PlayerTwoReady = true;
 
             while (Game.IsRunning)
             {
