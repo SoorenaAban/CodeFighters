@@ -239,6 +239,10 @@ namespace CodeFighters.GameMaster
             Game.IsRunning = true;
             _gameCodeHost.StartGame(false);
 
+            if(_isVsAI)
+                Game.PlayerTwoReady = true;
+            UpdateDatabase();
+
             while (Game.IsRunning)
             {
                 var start = DateTime.Now;

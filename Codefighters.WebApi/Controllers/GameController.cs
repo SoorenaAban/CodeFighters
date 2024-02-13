@@ -57,12 +57,13 @@ namespace CodeFighters.WebApi.Controllers
                 }
                 game.Players.Add(targetUser);
             }
-            game.IsVsAI = isVsAI;
+            //game.IsVsAI = isVsAI;
             game.PlayerOneId = currentUser.Id;
             game.PlayerOneReady = false;
-            if(!isVsAI)
-                game.PlayerTwoReady = false;
-            else game.PlayerTwoReady = true;
+            game.PlayerTwoReady = false;
+            //if(!isVsAI)
+            //    game.PlayerTwoReady = false;
+            //else game.PlayerTwoReady = true;
             game.PlayerOneAnswered = false;
             game.PlayerTwoAnswered = false;
             game.IsActive = true;
