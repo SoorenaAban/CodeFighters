@@ -1,25 +1,28 @@
 ﻿using CodeFighters.GameMaster;
 using Microsoft.AspNetCore.Mvc;
+using CodeFighters.Data;
 using CodeFighters.GameMaster;
+
 using Microsoft.AspNetCore.Authentication;
+using CodeFighters.WebApi.Dto;
 
 namespace CodeFighters.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GameMasterController : Controller
+    public class GameMasterController(IGameMaster gameMaster, ApiContext apiContext) : Controller
     {
-        private readonly IGameMaster _gameMaster;
-
-        public GameMasterController(IGameMaster gameMaster)
-        {
-            _gameMaster = gameMaster;
-        }
+        private readonly IGameMaster _gameMaster = gameMaster;
+        private readonly ApiContext _apiContext = apiContext;
 
         [HttpGet]
         public IActionResult Index()
         {
-            return _gameMaster.GameCode != null ? Ok(_gameMaster.GameCode) : NotFound();
+            var gameCodes = _apiContext.GameCodes.OrderBy(gc => gc.IsValid).ToList();
+            var gameCodeDtos = new List<CodeDto>();
+            foreach (var gameCode in gameCodes)
+                gameCodeDtos.Add(new CodeDto(gameCode));
+            return Ok(gameCodeDtos);
         }
 
         [HttpPost]
