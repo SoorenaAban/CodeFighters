@@ -12,9 +12,11 @@ namespace CodeFighters.Data
 
         public DbSet<UserModel> Users { get; set; }
         public DbSet<GameModel> Games { get; set; }
-        public DbSet<GameQuestionModel> GameQuestions { get; set; }
-        public DbSet<GameAction> GameActions { get; set; }
         public DbSet<ReportModel> Reports { get; set; }
+        public DbSet<UserMessageModel> Messages { get; set; }
+        public DbSet<GameCodeModel> GameCodes { get; set; }
+        public DbSet<GameErrorModel> GameErrors { get; set; }
+        public DbSet<LogModel> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +27,9 @@ namespace CodeFighters.Data
             modelBuilder.Entity<UserModel>().HasMany(u => u.MessagesSent).WithOne(c => c.Sender);
 
             modelBuilder.Entity<GameModel>().HasMany(g => g.Players).WithMany(u => u.Games);
+            modelBuilder.Entity<GameModel>().HasMany(g => g.Errors).WithOne(e => e.Game);
+
+            modelBuilder.Entity<GameCodeModel>().HasMany(g => g.Games).WithOne(g => g.GameCode);
 
         }
 

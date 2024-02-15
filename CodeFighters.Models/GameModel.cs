@@ -50,8 +50,10 @@ namespace CodeFighters.Models
         /// 4- tie
         /// </summary>
         public int Result { get; set; }
+        public virtual GameCodeModel GameCode { get; set; }
 
         public virtual ICollection<GameQuestionModel> Questions { get; set; }
+        public virtual ICollection<GameErrorModel> Errors { get; set; }
 
     }
 }
