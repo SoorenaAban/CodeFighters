@@ -19,7 +19,39 @@ namespace CodeFighters.Data.Migrations
                 .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CodeFighters.Models.GameAction", b =>
+            modelBuilder.Entity("CodeFighters.Models.GameCodeModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameCodes");
+                });
+
+            modelBuilder.Entity("CodeFighters.Models.GameErrorModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -28,6 +60,13 @@ namespace CodeFighters.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("GameCodeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("char(36)");
@@ -40,11 +79,13 @@ namespace CodeFighters.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GameCodeId");
+
                     b.HasIndex("GameId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GameActions");
+                    b.ToTable("GameErrors");
                 });
 
             modelBuilder.Entity("CodeFighters.Models.GameModel", b =>
@@ -59,6 +100,9 @@ namespace CodeFighters.Data.Migrations
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("GameCodeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("HasStarted")
                         .HasColumnType("tinyint(1)");
@@ -104,45 +148,38 @@ namespace CodeFighters.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GameCodeId");
+
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("CodeFighters.Models.GameQuestionModel", b =>
+            modelBuilder.Entity("CodeFighters.Models.LogModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("GeneratedOn")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Prompt")
+                    b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("RawResponse")
+                    b.Property<string>("Source")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId");
-
-                    b.ToTable("GameQuestions");
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("CodeFighters.Models.ProfileAvatar", b =>
@@ -239,7 +276,7 @@ namespace CodeFighters.Data.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("UserMessageModel");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("CodeFighters.Models.UserModel", b =>
@@ -302,10 +339,16 @@ namespace CodeFighters.Data.Migrations
                     b.ToTable("GameModelUserModel");
                 });
 
-            modelBuilder.Entity("CodeFighters.Models.GameAction", b =>
+            modelBuilder.Entity("CodeFighters.Models.GameErrorModel", b =>
                 {
-                    b.HasOne("CodeFighters.Models.GameModel", "Game")
+                    b.HasOne("CodeFighters.Models.GameCodeModel", "GameCode")
                         .WithMany()
+                        .HasForeignKey("GameCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CodeFighters.Models.GameModel", "Game")
+                        .WithMany("Errors")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -318,18 +361,20 @@ namespace CodeFighters.Data.Migrations
 
                     b.Navigation("Game");
 
+                    b.Navigation("GameCode");
+
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CodeFighters.Models.GameQuestionModel", b =>
+            modelBuilder.Entity("CodeFighters.Models.GameModel", b =>
                 {
-                    b.HasOne("CodeFighters.Models.GameModel", "Game")
-                        .WithMany("Questions")
-                        .HasForeignKey("GameId")
+                    b.HasOne("CodeFighters.Models.GameCodeModel", "GameCode")
+                        .WithMany("Games")
+                        .HasForeignKey("GameCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Game");
+                    b.Navigation("GameCode");
                 });
 
             modelBuilder.Entity("CodeFighters.Models.ReportModel", b =>
@@ -396,9 +441,14 @@ namespace CodeFighters.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CodeFighters.Models.GameCodeModel", b =>
+                {
+                    b.Navigation("Games");
+                });
+
             modelBuilder.Entity("CodeFighters.Models.GameModel", b =>
                 {
-                    b.Navigation("Questions");
+                    b.Navigation("Errors");
                 });
 
             modelBuilder.Entity("CodeFighters.Models.UserModel", b =>

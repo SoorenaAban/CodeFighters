@@ -4,11 +4,13 @@ class Game:
     def __init__(self, isVsAI):
         self.health = 40
 
-    def answer(self, answer, player):
+    def accept_answer(self, answer, player):
+        #'one' for player one
+        #'two' for player two
         return "test"
 
     def turn(self):
-        return "test"
+        return "next question"
 
     def gameOver(self):
         return True

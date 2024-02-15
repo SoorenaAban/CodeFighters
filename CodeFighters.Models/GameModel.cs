@@ -51,8 +51,6 @@ namespace CodeFighters.Models
         /// </summary>
         public int Result { get; set; }
         public virtual GameCodeModel GameCode { get; set; }
-
-        public virtual ICollection<GameQuestionModel> Questions { get; set; }
         public virtual ICollection<GameErrorModel> Errors { get; set; }
 
     }

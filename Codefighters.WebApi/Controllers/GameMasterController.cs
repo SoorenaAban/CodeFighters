@@ -5,6 +5,7 @@ using CodeFighters.GameMaster;
 
 using Microsoft.AspNetCore.Authentication;
 using CodeFighters.WebApi.Dto;
+using CodeFighters.Models;
 
 namespace CodeFighters.WebApi.Controllers
 {
@@ -33,11 +34,22 @@ namespace CodeFighters.WebApi.Controllers
             //check if token is in code
             if (!code.Contains(validationToken))
                 return BadRequest("validation token not present");
+            
+            var codeModel = new GameCodeModel
+            {
+                Code = code,
+                IsValid = true,
+                ErrorMessage = ""
+            };
+            _apiContext.SaveChanges();
 
             _gameMaster.GameCode = code;
             var validator = new GameCodeValidator(code);
             if (!validator.Validate())
             {
+                codeModel.IsValid = false;
+                codeModel.ErrorMessage = validator.ErrorMessage;
+                _apiContext.SaveChanges();
                 return BadRequest(validator.ErrorMessage);
             }
             return Ok();
